@@ -49,7 +49,7 @@ $gateway_url = 'https://webcheckout.tpaga.co/checkout';
 if (Configuration::get('TPAGA_TEST') == 'true')
 {
 	$test = 1;
-  $gateway_url = 'https://staging.webcheckout.tpaga.co/checkout';
+	$gateway_url = 'https://staging.webcheckout.tpaga.co/checkout';
 }
 
 if (!Validate::isLoadedObject($customer) || !Validate::isLoadedObject($billing_address) && !Validate::isLoadedObject($currency))
