@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 <link href="{$css|escape:'htmlall':'UTF-8'}tpaga.css" rel="stylesheet" type="text/css">
-<p class="perform_payment">
+<p class="payment_module tpaga">
 	<a href="{$pathSsl|escape:'htmlall':'UTF-8'}payment.php">
 		<img src="{$modulePath|escape:'htmlall':'UTF-8'}img/logo.png" alt="tpaga" class="md-payment"/>
 		{l s='Pay by tpaga (pay with credit card or cash deposit)' mod='tpaga'}
