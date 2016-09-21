@@ -28,7 +28,7 @@ if (!defined('_PS_VERSION_'))
 
 class Tpaga extends PaymentModule {
 
-	private $_postErrors = array();
+	private $_post_errors = array();
 	
 	public function __construct()
 	{
@@ -49,12 +49,12 @@ class Tpaga extends PaymentModule {
 		if (_PS_VERSION_ < '1.5')
 			require(_PS_MODULE_DIR_.$this->name.'/backward_compatibility/backward.php');
 	
-		$this->_checkForUpdates();
+		$this->_check_for_updates();
 	}
 	
 	public function install()
 	{
-		$this->_createStates();
+		$this->_create_states();
 	
 		if (!parent::install()
 			|| !$this->registerHook('payment')
@@ -84,14 +84,14 @@ class Tpaga extends PaymentModule {
 	
 		if (isset($httpMethod) && isset($httpMethod['submitTpaga']))
 		{
-			$this->_postValidation();
-			if (!count($this->_postErrors))
+			$this->_post_validation();
+			if (!count($this->_post_errors))
 	    {
-				$this->_saveConfiguration();
+				$this->_save_configuration();
 				$html .= $this->displayConfirmation($this->l('Settings updated'));
 			}
 	    else
-				foreach ($this->_postErrors as $err)
+				foreach ($this->_post_errors as $err)
 					$html .= $this->displayError($err);
 		}
 		return $html.$this->_displayAdminTpl();
@@ -103,7 +103,7 @@ class Tpaga extends PaymentModule {
 			'tab' => array(
 				'intro' => array(
 					'title' => $this->l('How to configure'),
-					'content' => $this->_displayHelpTpl(),
+					'content' => $this->_display_help_tpl(),
 	        'icon' => '../modules/tpaga/img/info-icon.gif',
 					'tab' => 'conf',
 					'selected' => (Tools::isSubmit('submitTpaga') ? false : true),
@@ -111,7 +111,7 @@ class Tpaga extends PaymentModule {
 				),
 				'credential' => array(
 					'title' => $this->l('Credentials'),
-					'content' => $this->_displayCredentialTpl(),
+					'content' => $this->_display_credential_tpl(),
 	        'icon' => '../modules/tpaga/img/credential.png',
 					'tab' => 'crendeciales',
 					'selected' => (Tools::isSubmit('submitTpaga') ? true : false),
@@ -126,12 +126,12 @@ class Tpaga extends PaymentModule {
 		return $this->display(__FILE__, 'views/templates/admin/admin.tpl');
 	}
 	
-	private function _displayHelpTpl()
+	private function _display_help_tpl()
 	{
 		return $this->display(__FILE__, 'views/templates/admin/help.tpl');
 	}
 	
-	private function _displayCredentialTpl()
+	private function _display_credential_tpl()
 	{
 		$this->context->smarty->assign(array(
 			'formCredential' => './index.php?tab=AdminModules&configure=tpaga&token='.Tools::getAdminTokenLite('AdminModules').
@@ -169,7 +169,7 @@ class Tpaga extends PaymentModule {
 	}
 	
 	
-	public function hookPayment($params)
+	public function hookPayment()
 	{
 		if (!$this->active)
 			return;
@@ -182,23 +182,23 @@ class Tpaga extends PaymentModule {
 	  return $this->display(__FILE__, 'views/templates/hook/tpaga_payment.tpl');
 	}
 	
-	private function _postValidation()
+	private function _post_validation()
 	{
 		if (!Validate::isCleanHtml(Tools::getValue('merchant_token'))
 			|| !Validate::isGenericName(Tools::getValue('merchant_token')))
-	    $this->_postErrors[] = $this->l('You must indicate the merchant token');
+	    $this->_post_errors[] = $this->l('You must indicate the merchant token');
 	
 		if (!Validate::isCleanHtml(Tools::getValue('secret_token'))
 			|| !Validate::isGenericName(Tools::getValue('secret_token')))
-	    $this->_postErrors[] = $this->l('You must provide the Tpaga WebCheckout token');
+	    $this->_post_errors[] = $this->l('You must provide the Tpaga WebCheckout token');
 	
 		if (!Validate::isCleanHtml(Tools::getValue('test'))
 			|| !Validate::isGenericName(Tools::getValue('test')))
-			$this->_postErrors[] = $this->l('You must indicate if the transaction mode is test or not');
+			$this->_post_errors[] = $this->l('You must indicate if the transaction mode is test or not');
 	
 	}
 	
-	private function _saveConfiguration()
+	private function _save_configuration()
 	{
 	  Configuration::updateValue('TPAGA_MERCHANT_TOKEN', (string)Tools::getValue('merchant_token'));
 	  Configuration::updateValue('TPAGA_SECRET_TOKEN', (string)Tools::getValue('secret_token'));
@@ -206,7 +206,7 @@ class Tpaga extends PaymentModule {
 	}
 	
 	
-	private function _checkForUpdates()
+	private function _check_for_updates()
 	{
 		// Used by PrestaShop 1.3 & 1.4
 		if (version_compare(_PS_VERSION_, '1.5', '<') && self::isInstalled($this->name))
@@ -221,45 +221,45 @@ class Tpaga extends PaymentModule {
 			}
 	}
 	
-	private function _createStates()
+	private function _create_states()
 	{
 	  if (!Configuration::get('TPAGA_OS_PENDING'))
 		{
-			$this->_updateState('TPAGA_OS_PENDING', 'Pending', '#FEFF64');
+			$this->_update_state('TPAGA_OS_PENDING', 'Pending', '#FEFF64');
 		}
 	
 		if (!Configuration::get('TPAGA_OS_FAILED'))
 		{
-			$this->_updateState('TPAGA_OS_FAILED', 'Failed Payment', '#8F0621');
+			$this->_update_state('TPAGA_OS_FAILED', 'Failed Payment', '#8F0621');
 		}
 	
 		if (!Configuration::get('TPAGA_OS_REJECTED'))
 		{
-			$this->_updateState('TPAGA_OS_REJECTED', 'Rejected Payment', '#8F0621');
+			$this->_update_state('TPAGA_OS_REJECTED', 'Rejected Payment', '#8F0621');
 		}
 	}
 	
-	private function _updateState($valueToUpdate, $stateName, $stateColor)
+	private function _update_state($valueToUpdate, $stateName, $stateColor)
 	{
-		$order_state = new OrderState();
-		$order_state->name = array();
+		$orderState = new OrderState();
+		$orderState->name = array();
 		foreach (Language::getLanguages() as $language)
-			$order_state->name[$language['id_lang']] = $stateName;
+			$orderState->name[$language['id_lang']] = $stateName;
 	
-		$order_state->color = $stateColor;
-		$order_state->send_email = false;
-		$order_state->hidden = false;
-		$order_state->delivery = false;
-		$order_state->logable = false;
-		$order_state->invoice = false;
+		$orderState->color = $stateColor;
+		$orderState->send_email = false;
+		$orderState->hidden = false;
+		$orderState->delivery = false;
+		$orderState->logable = false;
+		$orderState->invoice = false;
 	
-		if ($order_state->add())
+		if ($orderState->add())
 		{
 			$source = dirname(__FILE__).'/img/logo.jpg';
-			$destination = dirname(__FILE__).'/../../img/os/'.(int)$order_state->id.'.gif';
+			$destination = dirname(__FILE__).'/../../img/os/'.(int)$orderState->id.'.gif';
 			copy($source, $destination);
 		}
-		Configuration::updateValue($valueToUpdate, (int)$order_state->id);
+		Configuration::updateValue($valueToUpdate, (int)$orderState->id);
 	}
 }
 ?>
