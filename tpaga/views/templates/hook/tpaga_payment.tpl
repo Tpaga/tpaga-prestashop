@@ -24,8 +24,8 @@
 <link href="{$css|escape:'htmlall':'UTF-8'}tpaga.css" rel="stylesheet" type="text/css">
 <div class="row">
 	<div class="col-xs-12 col-md-6">
-		<p class="perform_payment">
-			<a href="{$module_dir|escape:'htmlall':'UTF-8'}validation.php" class="link-redirect">
+		<p class="payment_module">
+			<a href="{$module_dir|escape:'htmlall':'UTF-8'}validation.php" class="perform_payment">
 				{l s='Realiza tu pago seguro con Tpaga' mod='tpaga'}
 			</a>
 		</p>
