@@ -94,10 +94,10 @@ class Tpaga extends PaymentModule {
 				foreach ($this->_post_errors as $err)
 					$html .= $this->displayError($err);
 		}
-		return $html.$this->_displayAdminTpl();
+		return $html.$this->_display_admin_tpl();
 	}
 	
-	private function _displayAdminTpl()
+	private function _display_admin_tpl()
 	{
 		$this->context->smarty->assign(array(
 			'tab' => array(
