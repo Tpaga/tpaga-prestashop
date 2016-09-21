@@ -26,7 +26,6 @@
 
 <link href="{$css|escape:'htmlall':'UTF-8'}normalize.css" rel="stylesheet" type="text/css">
 <link href="{$css|escape:'htmlall':'UTF-8'}tpaga.css" rel="stylesheet" type="text/css">
-<img src="{$tracking|escape:'htmlall':'UTF-8'}" alt="tracking" class="md-tracking"/>
 <div class="ctwrapper">
 	<div class="header_tpaga clearfix">
 		<div class="centered-container">

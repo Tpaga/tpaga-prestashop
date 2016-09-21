@@ -49,7 +49,7 @@ public function __construct()
 	if (_PS_VERSION_ < '1.5')
 		require(_PS_MODULE_DIR_.$this->name.'/backward_compatibility/backward.php');
 
-	$this->checkForUpdates();
+	$this->_checkForUpdates();
 }
 
 public function install()
@@ -117,9 +117,6 @@ private function _displayAdminTpl()
 				'style' => 'credentials_tpaga'
 			),
 		),
-		// TODO: Delete or configure this thing
-		//'tracking' => 'http://www.prestashop.com/modules/pagosonline.png?url_site='.Tools::safeOutput($_SERVER['SERVER_NAME']).'&id_lang='.
-		//(int)$this->context->cookie->id_lang,
 		'img' => '../modules/tpaga/img/',
     'css' => '../modules/tpaga/css/',
 		'lang' => ($this->context->language->iso_code != 'en' || $this->context->language->iso_code != 'es' ? 'en' : $this->context->language->iso_code)
@@ -279,7 +276,7 @@ private function _createStates()
 	}
 }
 
-private function checkForUpdates()
+private function _checkForUpdates()
 {
 	// Used by PrestaShop 1.3 & 1.4
 	if (version_compare(_PS_VERSION_, '1.5', '<') && self::isInstalled($this->name))
