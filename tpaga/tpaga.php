@@ -80,8 +80,9 @@ class Tpaga extends PaymentModule {
 	public function getContent()
 	{
 		$html = '';
+		$httpMethod = $_POST;
 	
-		if (isset($_POST) && isset($_POST['submitTpaga']))
+		if (isset($httpMethod) && isset($httpMethod['submitTpaga']))
 		{
 			$this->_postValidation();
 			if (!count($this->_postErrors))
