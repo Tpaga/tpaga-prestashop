@@ -1,4 +1,3 @@
-[![Issue Count](https://codeclimate.com/github/Tpaga/tpaga-prestashop/badges/issue_count.svg)](https://codeclimate.com/github/Tpaga/tpaga-prestashop)
 [![Code Climate](https://codeclimate.com/github/Tpaga/tpaga-prestashop/badges/gpa.svg)](https://codeclimate.com/github/Tpaga/tpaga-prestashop)
 
 # Tpaga Web Checkout para Prestashop
