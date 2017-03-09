@@ -10,7 +10,7 @@ Tpaga WebCheckout es un servicio de Tpaga con el cual sus clientes podrán reali
 
 ## Instalación del módulo en prestashop
 
-1. Descargue el Zip de este repositorio.
+1. Descargue el Zip de este repositorio. https://github.com/Tpaga/tpaga-prestashop/releases/download/1.0/tpaga.zip
 2. Ingrese al apartado de módulos de su e-commerce
 3. Seleccione el archivo que acabo de descargar en el paso 1, Luego haga click en subir módulo.
 4. Instale el módulo. Una vez instalado usted será dirigido a el panel de configuración.
