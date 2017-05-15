@@ -21,6 +21,14 @@
 *  @copyright 2016 TPaga
 *  @license		http://opensource.org/licenses/osl-3.0.php	Open Software License (OSL 3.0)
 *}
+
+{*
+Developer's readme:
+This file is for recieve and show a failed transaction.
+When Tpaga's WC response in field signature = 'customererror'
+tpaga's plugin shows this tpl
+*}
+
 <link rel="stylesheet" href="{$css_dir}global.css" type="text/css" media="all">
 <link href="{$css|escape:'htmlall':'UTF-8'}tpaga.css" rel="stylesheet" type="text/css">
 {if $valid && $successful}
@@ -31,35 +39,43 @@
 			</tr>
 			<tr align="left">
 				<td>{l s='Transaction State' mod='tpaga'}</td>
-				<td>{$estadoTx|escape:'htmlall':'UTF-8'}</td>
+				<td>{$purchase_state|escape:'htmlall':'UTF-8'}</td>
 			</tr>
 			<tr align="left">
-				<td>{l s='Transaction ID' mod='tpaga'}</td>
-				<td>{$transactionId|escape:'htmlall':'UTF-8'}</td>
+				<td>{l s='Order Number' mod='tpaga'}</td>
+				<td>{$purchase_order_id|escape:'htmlall':'UTF-8'}</td>
 			</tr>
 			<tr align="left">
-				<td>{l s='Total Value' mod='tpaga'}</td>
-				<td>${$value|escape:'htmlall':'UTF-8'}</td>
+				<td>{l s='Customer Email' mod='tpaga'}</td>
+				<td>{$customer_email|escape:'htmlall':'UTF-8'}</td>
 			</tr>
 			<tr align="left">
-				<td>{l s='installments' mod='tpaga'}</td>
+				<td>{l s='Purchase Amount' mod='tpaga'}</td>
+				<td>{$purchase_amount|escape:'htmlall':'UTF-8'}</td>
+			</tr>
+			<tr align="left">
+				<td>{l s='Purchase Tax' mod='tpaga'}</td>
+				<td>{$purchase_tax|escape:'htmlall':'UTF-8'}</td>
+			</tr>
+			<tr align="left">
+				<td>{l s='Purchase Installments' mod='tpaga'}</td>
 				<td>{$installments|escape:'htmlall':'UTF-8'}</td>
 			</tr>
 			<tr align="left">
-				<td>{l s='Currency' mod='tpaga'}</td>
-				<td>{$currency|escape:'htmlall':'UTF-8'}</td>
+				<td>{l s='Purchase Currency' mod='tpaga'}</td>
+				<td>{$purchase_currency|escape:'htmlall':'UTF-8'}</td>
 			</tr>
 			<tr align="left">
-				<td>{l s='Description' mod='tpaga'}</td>
-				<td>{$description|escape:'htmlall':'UTF-8'}</td>
+				<td>{l s='Purchase Description' mod='tpaga'}</td>
+				<td>{$purchase_description|escape:'htmlall':'UTF-8'}</td>
 			</tr>
 			<tr align="left">
-				<td>{l s='Entity' mod='tpaga'}</td>
-				<td>{$lapPaymentMethod|escape:'htmlall':'UTF-8'}</td>
+				<td>{l s='Purchase Message' mod='tpaga'}</td>
+				<td>{$payment_message|escape:'htmlall':'UTF-8'}</td>
 			</tr>
 		</table>
 		<p/>
-		<h1>{$messageApproved|escape:'htmlall':'UTF-8'}</h1>
+		<h1>{$payment_message|escape:'htmlall':'UTF-8'}</h1>
 	</center>
 {elseif !$valid && !$successful}
 	<h1><center>{l s='Your payment could not be completed, please contact your bank.' mod='tpaga'}</center></h1>

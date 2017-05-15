@@ -30,134 +30,124 @@ include(dirname(__FILE__).'/../../../header.php');
 
 $tpaga = new Tpaga();
 
-if (isset($_REQUEST['signature']))
-	$signature = $_REQUEST['signature'];
-else
-	$signature = $_REQUEST['firma'];
+$purchase_description = "";
+$merchant_token = "";
+$purchase_order_id = "";
+$purchase_amount = "";
+$purchase_tax = "";
+$purchase_id = "";
+$customer_email = "";
+$signature = "";
+$purchase_state = "";
+$purchase_date = "";
+$purchase_currency = "";
+$payment_method = "";
+$installments = "";
+$payment_message = "";
 
-if (isset($_REQUEST['merchantId']))
-	$merchant_id = $_REQUEST['merchantId'];
-else
-	$merchant_id = $_REQUEST['usuario_id'];
 
-if (isset($_REQUEST['referenceCode']))
-	$reference_code = $_REQUEST['referenceCode'];
-else
-	$reference_code = $_REQUEST['ref_venta'];
+if ($_REQUEST['signature'] != 'customererror' && isset($_REQUEST['signature'])) {
 
-if (isset($_REQUEST['TX_VALUE']))
-	$value = $_REQUEST['TX_VALUE'];
-else
-	$value = $_REQUEST['valor'];
+    $signature = $_REQUEST['signature'];
 
-if (isset($_REQUEST['currency']))
+    if (isset($_REQUEST['purchase_description']))
+        $purchase_description = $_REQUEST['purchase_description'];
 
-	$currency = $_REQUEST['currency'];
-else
-	$currency = $_REQUEST['moneda'];
+    if (isset($_REQUEST['merchant_token']))
+        $merchant_token = $_REQUEST['merchant_token'];
 
-if (isset($_REQUEST['transactionState']))
-	$transaction_state = $_REQUEST['transactionState'];
-else
-	$transaction_state = $_REQUEST['estado'];
+    if (isset($_REQUEST['purchase_order_id']))
+        $purchase_order_id = $_REQUEST['purchase_order_id'];
 
-$value = number_format($value, 1, '.', '');
+    if (isset($_REQUEST['purchase_amount']))
+        $purchase_amount = $_REQUEST['purchase_amount'];
 
-$api_key = Configuration::get('PAYU_LATAM_API_KEY');
-$signature_local = $api_key.'~'.$merchant_id.'~'.$reference_code.'~'.$value.'~'.$currency.'~'.$transaction_state;
-$signature_md5 = md5($signature_local);
+    if (isset($_REQUEST['purchase_tax']))
+        $purchase_tax = $_REQUEST['purchase_tax'];
 
-if (isset($_REQUEST['polResponseCode']))
-	$pol_response_code = $_REQUEST['polResponseCode'];
-else
-	$pol_response_code = $_REQUEST['codigo_respuesta_pol'];
+    if (isset($_REQUEST['purchase_id']))
+        $purchase_id = $_REQUEST['purchase_id'];
 
-$messageApproved = '';
-if ($transaction_state == 6 && $pol_response_code == 5)
-	$estado_tx = $tpaga->l('Failed Transaction');
-else if ($transaction_state == 6 && $pol_response_code == 4)
-	$estado_tx = $tpaga->l('Rejected Transaction');
-else if ($transaction_state == 12 && $pol_response_code == 9994)
-	$estado_tx = $tpaga->l('Pending Transaction, Please check if the debit was made in the Bank');
-else if ($transaction_state == 4 && $pol_response_code == 1)
-{
-	$estado_tx = $tpaga->l('Transaction Approved');
-	$messageApproved = $tpaga->l('¡Thank you for your purchase!');
+    if (isset($_REQUEST['customer_email']))
+        $customer_email = $_REQUEST['customer_email'];
+
+    if (isset($_REQUEST['purchase_state'])) {
+        $purchase_state = $_REQUEST['purchase_state'];
+        if ($purchase_state == 'paid') {
+            $successful = true;
+        } else {
+            $successful = false;
+        }
+    }
+
+    if (isset($_REQUEST['purchase_date']))
+        $purchase_date = $_REQUEST['purchase_date'];
+
+    if (isset($_REQUEST['purchase_currency']))
+        $purchase_currency = $_REQUEST['purchase_currency'];
+
+    if (isset($_REQUEST['payment_method']))
+        $payment_method = $_REQUEST['payment_method'];
+
+    if (isset($_REQUEST['installments']))
+        $installments = $_REQUEST['installments'];
+
+    if (isset($_REQUEST['payment_message']))
+        $payment_message = $_REQUEST['payment_message'];
+    else if ($purchase_state)
+        $payment_message = $tpaga->l('We got some communication troubles, please chek if debit was made');
+
+    $purchase_tax = number_format($purchase_tax, 1, '.', '');
+
+    $merchant_secret = Configuration::get('TPAGA_SECRET_TOKEN');
+    $message = $merchant_token . $purchase_amount . $purchase_order_id . $purchase_id . $purchase_state . $merchant_secret;
+    $local_signature = hash('sha256', $message);
+
+    $cart = new Cart((int)$purchase_order_id);
+
+    if (Tools::strtoupper($signature) == Tools::strtoupper($local_signature)) {
+
+        if (!($cart->orderExists())) {
+            $customer = new Customer((int)$cart->id_customer);
+            Context::getContext()->customer = $customer;
+            $tpaga->validateOrder((int)$cart->id, Configuration::get('TPAGA_OS_PENDING'), (float)$cart->getordertotal(true), 'Tpaga', null, array(), (int)$cart->id_currency, false, $customer->secure_key);
+        }
+
+        Context::getContext()->smarty->assign(
+            array(
+                'purchase_state' => $purchase_state,
+                'purchase_order_id' => $purchase_order_id,
+                'customer_email' => $customer_email,
+                'purchase_amount' => $purchase_amount,
+                'purchase_tax' => $purchase_tax,
+                'installments' => $installments,
+                'purchase_currency' => $purchase_currency,
+                'purchase_description' => $purchase_description,
+                'payment_message' => $payment_message,
+                'valid' => true,
+                'successful' => $successful,
+                'css' => '../modules/tpaga/css/'
+            )
+        );
+    } else {
+        Context::getContext()->smarty->assign(
+            array(
+                'valid' => false,
+                'css' => '../modules/tpaga/css/'
+            )
+        );
+    }
+    Context::getContext()->smarty->display(dirname(__FILE__).'/../views/templates/front/response.tpl');
+    include(dirname(__FILE__).'/../../../footer.php');
 }
-else
-{
-	if (isset($_REQUEST['message']))
-		$estado_tx = $_REQUEST['message'];
-	else
-		$estado_tx = $_REQUEST['mensaje'];
+else {
+    Context::getContext()->smarty->assign(
+        array(
+            'payment_message' => $payment_message,
+            'valid' => false,
+            'css' => '../modules/tpaga/css/'
+        )
+    );
 }
 
-if (isset($_REQUEST['transactionId']))
-	$transaction_id = $_REQUEST['transactionId'];
-else
-	$transaction_id = $_REQUEST['transaccion_id'];
-
-if (isset($_REQUEST['reference_pol']))
-	$reference_pol = $_REQUEST['reference_pol'];
-else
-	$reference_pol = $_REQUEST['ref_pol'];
-
-if (isset($_REQUEST['pseBank']))
-	$pse_bank = $_REQUEST['pseBank'];
-else
-	$pse_bank = $_REQUEST['banco_pse'];
-
-$cus = $_REQUEST['cus'];
-if (isset($_REQUEST['description']))
-	$description = $_REQUEST['description'];
-else
-	$description = $_REQUEST['descripcion'];
-
-if (isset($_REQUEST['lapPaymentMethod']))
-	$lap_payment_method = $_REQUEST['lapPaymentMethod'];
-else
-	$lap_payment_method = $_REQUEST['medio_pago_lap'];
-
-	
-$cart = new Cart((int)$reference_code);
-
-if (Tools::strtoupper($signature) == Tools::strtoupper($signature_md5))
-{
-	if (!($cart->orderExists()))
-	{
-		$customer = new Customer((int)$cart->id_customer);
-		Context::getContext()->customer = $customer;
-		$tpaga->validateOrder((int)$cart->id, Configuration::get('TPAGA_OS_PENDING'), (float)$cart->getordertotal(true), 'Tpaga', null, array(), (int)$cart->id_currency, false, $customer->secure_key);
-	}
-	
-	Context::getContext()->smarty->assign(
-		array(
-			'estadoTx' => $estado_tx,
-			'transactionId' => $transaction_id,
-			'reference_pol' => $reference_pol,
-			'referenceCode' => $reference_code,
-			'pseBank' => $pse_bank,
-			'cus' => $cus,
-			'value' => $value,
-			'currency' => $currency,
-			'description' => $description,
-			'lapPaymentMethod' => $lap_payment_method,
-			'messageApproved' => $messageApproved,
-			'valid' => true,
-			'css' => '../modules/tpaga/css/'
-		)
-	);
-
-}
-else
-{
-	Context::getContext()->smarty->assign(
-		array(
-			'valid' => false,
-			'css' => '../modules/tpaga/css/'
-		)
-	);
-}
-Context::getContext()->smarty->display(dirname(__FILE__).'/../views/templates/front/response.tpl');
-include(dirname(__FILE__).'/../../../footer.php');
 ?>
