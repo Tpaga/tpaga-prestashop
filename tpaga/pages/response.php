@@ -137,8 +137,6 @@ if ($_REQUEST['signature'] != 'customererror' && isset($_REQUEST['signature'])) 
             )
         );
     }
-    Context::getContext()->smarty->display(dirname(__FILE__).'/../views/templates/front/response.tpl');
-    include(dirname(__FILE__).'/../../../footer.php');
 }
 else {
     Context::getContext()->smarty->assign(
@@ -149,5 +147,7 @@ else {
         )
     );
 }
+Context::getContext()->smarty->display(dirname(__FILE__).'/../views/templates/front/response.tpl');
+include(dirname(__FILE__).'/../../../footer.php');
 
 ?>
